@@ -13,7 +13,7 @@
           </p>
           <RouterLink
             class="btn btn-lg btn-success text-white fw-normal btn-icon"
-            to=""
+            to="/foods"
           >
             <i class="bi bi-arrow-right"></i>
             Order
