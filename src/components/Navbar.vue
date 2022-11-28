@@ -31,7 +31,9 @@ import axios from "axios";
             <RouterLink to="/cart" class="nav-link">
               Cart
               <i class="bi bi-bag"></i>
-              <span class="badge bg-success ms-2">{{ countCart }}</span>
+              <span class="badge bg-success ms-2">{{
+                updateCountCart ? updateCountCart.length : countCart
+              }}</span>
             </RouterLink>
           </li>
         </ul>
@@ -42,16 +44,16 @@ import axios from "axios";
 
 <script>
 export default {
+  props: ["updateCountCart"],
   data() {
     return {
       countCart: 0,
     };
   },
   methods: {
-    setCountCart(data){
-      console.log(data)
-      this.countCart = data.length
-    }
+    setCountCart(data) {
+      this.countCart = data.length;
+    },
   },
   mounted() {
     axios({

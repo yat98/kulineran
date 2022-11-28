@@ -7,7 +7,7 @@ import { useToast } from "vue-toast-notification";
 <template>
   <Navbar />
   <div class="container">
-    <div class="row mt-3">
+    <div class="row mt-4">
       <div class="col">
         <nav aria-label="breadcrumb" class="rounded">
           <ol class="breadcrumb p-0">
@@ -31,7 +31,7 @@ import { useToast } from "vue-toast-notification";
         </nav>
       </div>
 
-      <div class="row mt-3">
+      <div class="row mt-4">
         <div class="col-md-6">
           <img
             :src="`/assets/img/foods/${food.image}`"
@@ -94,8 +94,8 @@ export default {
       this.food = data;
     },
     async order() {
-      const $toast = useToast()
-      this.carts.food = this.food
+      const $toast = useToast();
+      this.carts.food = this.food;
 
       if (this.carts.totalOrder) {
         await axios({
@@ -111,15 +111,15 @@ export default {
               dismissible: true,
             });
           })
-          .catch((error) => console.log("Error", error))
-          await this.$router.push({ path: '/cart' })
-      }else{
+          .catch((error) => console.log("Error", error));
+        await this.$router.push({ path: "/cart" });
+      } else {
         $toast.error("Total order is required!", {
-            type: "error",
-            position: "top-right",
-            duration: 3000,
-            dismissible: true,
-          });
+          type: "error",
+          position: "top-right",
+          duration: 3000,
+          dismissible: true,
+        });
       }
     },
   },
