@@ -1,6 +1,7 @@
 <script setup>
 import Navbar from "../components/Navbar.vue";
 import axios from "axios";
+import { useToast } from "vue-toast-notification";
 </script>
 
 <template>
@@ -45,10 +46,15 @@ import axios from "axios";
           <h4 class="mb-4">
             Price: <strong>Rp.{{ food.price }}</strong>
           </h4>
-          <form action="">
+          <form v-on:submit.prevent="">
             <div class="mb-3">
               <label for="total_order" class="form-label">Total Order</label>
-              <input type="text" class="form-control" id="total_order" />
+              <input
+                type="text"
+                class="form-control"
+                id="total_order"
+                v-model="carts.totalOrder"
+              />
             </div>
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
@@ -57,10 +63,15 @@ import axios from "axios";
                 rows="4"
                 class="form-control"
                 placeholder="Description Example: Nasi setengah..."
+                v-model="carts.description"
               ></textarea>
             </div>
-            <button type="submit" class="btn btn-icon btn-success">
-              <i class="bi bi-bag"></i>
+            <button
+              type="submit"
+              class="btn btn-icon btn-success"
+              @click="order"
+            >
+              <i class="bi bi-bag-plus"></i>
               Order
             </button>
           </form>
@@ -75,11 +86,41 @@ export default {
   data() {
     return {
       food: {},
+      carts: {},
     };
   },
   methods: {
     setFood(data) {
       this.food = data;
+    },
+    async order() {
+      const $toast = useToast()
+      this.carts.food = this.food
+
+      if (this.carts.totalOrder) {
+        await axios({
+          method: "post",
+          url: "http://localhost:3000/carts",
+          data: this.carts,
+        })
+          .then((response) => {
+            $toast.success("Success add to cart!", {
+              type: "success",
+              position: "top-right",
+              duration: 3000,
+              dismissible: true,
+            });
+          })
+          .catch((error) => console.log("Error", error))
+          await this.$router.push({ path: '/cart' })
+      }else{
+        $toast.error("Total order is required!", {
+            type: "error",
+            position: "top-right",
+            duration: 3000,
+            dismissible: true,
+          });
+      }
     },
   },
   mounted() {

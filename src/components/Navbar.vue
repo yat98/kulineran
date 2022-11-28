@@ -1,3 +1,7 @@
+<script setup>
+import axios from "axios";
+</script>
+
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
@@ -27,7 +31,7 @@
             <RouterLink to="/cart" class="nav-link">
               Cart
               <i class="bi bi-bag"></i>
-              <span class="badge bg-success ms-2">0</span>
+              <span class="badge bg-success ms-2">{{ countCart }}</span>
             </RouterLink>
           </li>
         </ul>
@@ -37,7 +41,27 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      countCart: 0,
+    };
+  },
+  methods: {
+    setCountCart(data){
+      console.log(data)
+      this.countCart = data.length
+    }
+  },
+  mounted() {
+    axios({
+      method: "get",
+      url: "http://localhost:3000/carts",
+    })
+      .then((response) => this.setCountCart(response.data))
+      .catch((error) => console.log("Error", error));
+  },
+};
 </script>
 
 <style>
