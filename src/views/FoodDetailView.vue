@@ -50,7 +50,7 @@ import { useToast } from "vue-toast-notification";
             <div class="mb-3">
               <label for="total_order" class="form-label">Total Order</label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 id="total_order"
                 v-model="carts.totalOrder"

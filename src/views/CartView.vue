@@ -89,6 +89,41 @@ import { useToast } from "vue-toast-notification";
         </div>
       </div>
     </div>
+
+    <div class="row justify-content-end">
+      <div class="col-4">
+        <form v-on:submit.prevent="">
+          <div class="my-3">
+            <label for="name" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              v-model="orders.name"
+            />
+          </div>
+          <div class="my-3">
+            <label for="table_number" class="form-label">Table Number</label>
+            <input
+              type="number"
+              class="form-control"
+              id="table_number"
+              v-model="orders.tableNumber"
+            />
+          </div>
+          <div class="text-end">
+            <button
+              type="submit"
+              class="btn btn-icon btn-success"
+              @click="checkout"
+            >
+              <i class="bi bi-bag-plus"></i>
+              Checkout
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -97,6 +132,7 @@ export default {
   data() {
     return {
       carts: [],
+      orders: {},
     };
   },
   methods: {
@@ -111,9 +147,9 @@ export default {
     setCarts(data) {
       this.carts = data;
     },
-    async removeCart(index) {
+    removeCart(index) {
       const $toast = useToast();
-      await axios({
+      axios({
         method: "delete",
         url: "http://localhost:3000/carts/" + this.carts[index].id,
       })
@@ -127,8 +163,42 @@ export default {
           this.fetchCarts();
         })
         .catch((error) => console.log("Error", error));
-      await this.$router.push({ path: "/cart" });
     },
+    async checkout() {
+      const $toast = useToast();
+      if(this.orders.name && this.orders.tableNumber){
+        this.orders.carts = this.carts
+        axios({
+          method: "post",
+          url: "http://localhost:3000/checkouts",
+          data: this.orders,
+        })
+          .then((response) => {
+            $toast.success("Success checkout the orders!", {
+              type: "success",
+              position: "top-right",
+              duration: 3000,
+              dismissible: true,
+            });
+            this.carts.forEach(async (cart, index) => {
+              await axios({
+                method: "delete",
+                url: "http://localhost:3000/carts/" + this.carts[index].id,
+              })
+                .catch((error) => console.log("Error", error));
+              await this.$router.push({ path: "/checkout/success" });
+            })
+          })
+          .catch((error) => console.log("Error", error));
+      }else{
+        $toast.error("name or table number is required!", {
+            type: "error",
+            position: "top-right",
+            duration: 3000,
+            dismissible: true,
+          });
+      }
+    }
   },
   mounted() {
     this.fetchCarts();
